@@ -1,0 +1,248 @@
+; Machine name: TM M2
+; Machine description: this Turing machine accepts the strings over the alphabet {0} and
+; whose length is equal to a power of two.
+; Bryan Arnold
+; CSE 3502
+; 3/28/17
+
+; State 0: read leftmost symbol then shift right once, rejects if head is x or empty
+
+0 _ * R reject
+0 x x R reject
+0 0 _ R q1
+
+; State q1: go right as possible/replace 0's with x's, accepts if at a blank
+
+q1 x x R q1
+q1 _ _ R accept
+q1 0 x R q2
+
+; State q2: continue going right for x's and 0's, or shift back once left if the end
+; of the input is reached.
+
+q2 x x R q2
+q2 0 0 R q3
+q2 _ _ L q4
+
+; State q3: continue right for x's, reject if a space is rightmost at this state, or continue going right
+; replacing 0's with x's
+
+q3 x x R q3
+q3 0 x R q2
+q3 _ _ R reject
+
+; State q4: go all the way back to leftmost of the string, and go right again once reached
+
+q4 0 0 L q4
+q4 x x L q4
+q4 _ _ R q1
+
+; Reject State: rejects the input by halting
+
+reject * * * halt-reject
+
+; Accept State: accepts the input by halting
+
+accept * * * halt-accept
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Machine name: TM M$
+; Machine description: this Turing machine accepts any permutation of strings over the 
+; alphabet {a, b, c}. It shifts the input one space to the right and inserts a '$' symbol
+; at the beginning.
+; Bryan Arnold
+; CSE 3502
+; 3/28/17 
+
+; State 0: check if input is empty or not, rejects if empty
+
+0 _ * * reject
+0 a * * q0
+0 b * * q0
+0 c * * q0
+
+; State q0: move all the way to the right of the input, and when reached, move one space left
+
+q0 a a R q0
+q0 b b R q0
+q0 c c R q0
+q0 _ _ L q1
+
+; State q1: replace characters with blanks in order to be replaced later in their new position
+
+q1 a _ R q2
+q1 b _ R q3
+q1 c _ R q4
+q1 _ * * q6
+
+; State q2: shift 'a' character from input to the right, then return to left next character
+
+q2 _ a L q5
+
+; State q3: shift 'b' character from input to the right, then return to left next character
+
+q3 _ b L q5
+
+; State q4: shift 'c' character from input to the right, then return to left next character
+
+q4 _ c L q5
+
+; State q5: move back one shift left to put next character one shift right
+
+q5 _ _ L q1
+
+; State q6: shift back one space right after reaching a space let of the new head for $ insertion
+
+q6 _ _ R accept
+
+; accept State: inserts $ at new head and accepts by halting
+
+accept _ $ * halt-accept
+
+; reject State, only for empty input (not sure how to do if other characters are entered)
+; and rejects by halting.
+
+reject * * * halt-reject
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Machine Name: TM M#
+; Machine description: this Turing machine accepts any permutation of strings over the 
+; alphabet {a, b, c}. It shifts the input one space to the right and inserts a '$' symbol
+; at the beginning.
+; Bryan Arnold
+; CSE 3502
+; 3/28/17
+
+; State 0: check if input is empty or not, rejects if empty
+
+0 _ * * reject1
+0 a * * s0
+0 b * * s0
+0 c * * s0
+
+; State s0: move all the way to the right of the input, and when reached, move one space left
+
+s0 a a R s0
+s0 b b R s0
+s0 c c R s0
+s0 _ _ L s1
+
+; State s1: replace characters with blanks in order to replace later in new position
+
+s1 a _ R s2
+s1 b _ R s3
+s1 c _ R s4
+s1 _ * * s6
+
+; State s2: shift 'a' character from input to the right, then return to left next character
+
+s2 _ a L s5
+
+; State s3: shift 'b' character from input to the right, then return to left next character
+
+s3 _ b L s5
+
+; State s4: shift 'c' character from input to the right, then return to left next character
+
+s4 _ c L s5
+
+; State s5: move back one shift left to put next character one shift right
+
+s5 _ _ L s1
+
+; State s6: shift back one space right after reaching a space left of the new head for # insertion
+
+s6 _ _ R accept1
+
+; accept1 State: inserts # at new head and accepts by halting
+
+accept1 _ # * halt-accept
+
+; reject1 State, only for empty input (not sure how to do if other characters are entered)
+; and rejects as halting
+
+reject1 * * * halt-reject
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Machine Name: TM M$#
+; Machine description: this Turing machine accepts any permutation of strings over the 
+; alphabet {a, b, c}. It shifts the input two spaces to the right and inserts a '$' symbol
+; at the beginning followed by another insertion of '#' at the beginning. The string is a 
+; combination of the TM M$ and TM M# machines.
+; Bryan Arnold
+; CSE 3502
+; 3/28/17
+; State 0: check if input is empty or not, rejects if empty
+
+0 _ * * Reject
+0 a * * qs0
+0 b * * s0
+0 c * * s0
+
+; State qs0: move all the way to the right of the input, and when reached, move one space left
+
+qs0 a a R qs0
+qs0 b b R qs0
+qs0 c c R qs0
+qs0 _ _ L qs1
+
+; State qs1: replace characters with blanks in order to replace later with the same character
+; and does the first shift right
+
+qs1 a _ R qs2
+qs1 b _ R qs3
+qs1 c _ R qs4
+qs1 _ * * qs6
+
+; State qs2: second shift right for character 'a' placement
+
+qs2 _ _ R qs7
+
+; State qs7: replaces blank with character 'a', two shifts right of the original position
+
+qs7 _ a L qs5
+
+; State qs3: second shift right for character 'b' placement
+
+qs3 _ _ R qs8
+
+; State qs8: replaces blank with character 'b', two shifts right of the original position
+
+qs8 _ b L qs5
+
+; State qs4: second shift right for character 'c' placement
+
+qs4 _ _ R qs9
+
+; State qs9: replaces blank with character 'c', two shifts right of original position.
+
+qs9 _ c L qs5
+
+; State qs5: move back one shift left to get to next character
+
+qs5 _ _ L qs10
+
+; State qs10: move back another shift left to get to next character to be replaced two shifts
+; to the right.
+
+qs10 _ _ L qs1
+
+; State qs6: this shift right is to get back to the position of the original head
+
+qs6 _ _ R Accept
+
+; Accept State: inserts $ at position of the original head and shifts right for # placement 
+
+Accept _ $ R Accept1
+
+; Accept1 State: inserts # into the position and then halts by accepting
+
+Accept1 _ # * halt-accept
+
+; Reject State, only for empty input (not sure how to do if other characters are entered)
+; and halts the program by rejecting
+
+Reject * * * halt-reject
